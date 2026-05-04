@@ -38,9 +38,11 @@ module.exports.showListing = async(req, res)=>{
      .populate("owner");
     if(!listing){
         req.flash("error", "Listing doesNot exists");
-        res.redirect("/listings");
+        return res.redirect("/listings");
     }
-    res.render("show.ejs",{listing});
+    res.render("show.ejs",{listing,
+        mapToken: process.env.MAP_TOKEN 
+    });
 };
 
 // /posttt
