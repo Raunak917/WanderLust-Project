@@ -1,6 +1,6 @@
 const User = require("../models/user.js");
 module.exports.getUser = (req,res)=>{
-    res.render("users/signup.ejs");
+    res.render("../users/signup.ejs");
 };
 
 module.exports.getSaveData = async (req, res, next) => {
@@ -25,7 +25,7 @@ module.exports.getSaveData = async (req, res, next) => {
     });
 };
  module.exports.getLogin = (req,res)=>{
-    res.render("users/login.ejs");
+    res.render("../users/login.ejs");
  };
  module.exports.postLogin = async(req,res)=>{
         // res.send("Welcome to WanderLust! You r logged in :-)");
