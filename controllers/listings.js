@@ -4,7 +4,10 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 
 const mapToken = process.env.MAP_TOKEN;
 
-console.log("MAP TOKEN:", process.env.MAP_TOKEN);
+
+if (!mapToken) {
+    throw new Error("MAPBOX_TOKEN is not set in environment variables");
+}
 const geocodingClient = mbxGeocoding({
   accessToken: mapToken,
 });
