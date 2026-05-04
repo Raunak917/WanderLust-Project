@@ -6,7 +6,7 @@ const mapToken = process.env.MAP_TOKEN;
 
 
 if (!mapToken) {
-    throw new Error("MAPBOX_TOKEN is not set in environment variables");
+    throw new Error("MAP_TOKEN is not set in environment variables");
 }
 const geocodingClient = mbxGeocoding({
   accessToken: mapToken,
