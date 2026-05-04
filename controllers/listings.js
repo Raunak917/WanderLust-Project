@@ -48,16 +48,11 @@ module.exports.showListing = async(req, res)=>{
 // /posttt
 module.exports.createListing = async(req,res,next)=>{
     try{
-            if (
-      !req.body.listing.image ||
-      !req.body.listing.image.url ||
-      req.body.listing.image.url.trim() === ""
-    ) {
-      req.body.listing.image = {
-        url: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6",
-        filename: "listingimage"
-      };
-    }
+           if(!req.file){
+    req.flash("error", "Please upload an image");
+    return res.redirect("/listings/new");
+       }
+    
     //geocoding-------
     let response = await geocodingClient
     .forwardGeocode({
@@ -91,7 +86,7 @@ module.exports.editListing = async (req,res)=>{
     const listing = await Listing.findById(id);
     if(!listing){
          req.flash("error", "Listing not Found!");
-         res.render("edit.ejs", {listing});
+         return res.render("edit.ejs", {listing});
     }
 
     let orgImage = listing.image.url;
@@ -116,7 +111,7 @@ module.exports.updateListing = async(req,res)=>{
 //   }
     
     let listing = await Listing.findByIdAndUpdate(req.params.id, {...req.body.listing },{runValidators: true});
-    if(typeof req.file != undefined){
+    if(typeof req.file != "undefined"){
      let url = req.file.path;
     let filename = req.file.filename;
     listing.image = {url, filename};
@@ -132,5 +127,5 @@ module.exports.destroyListing = async(req,res)=>{
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     req.flash("success", "Listing Deleted");
-    res.redirect("/listings");
+    res.redirect(`/listings${id}`);
 };

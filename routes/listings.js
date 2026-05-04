@@ -18,7 +18,7 @@ router.route("/")
       );
 
 //new route
-router.get("/new",isLoggedIn,(ListingController.renderNewRoute) );
+router.get("/new",isLoggedIn,wrapAsync(ListingController.renderNewRoute) );
 
 router.route("/:id")
 .get(wrapAsync(ListingController. showListing) )
