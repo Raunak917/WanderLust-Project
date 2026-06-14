@@ -1,8 +1,8 @@
-const Listing = require("./models/listing.js");
-const ExpressError = require('./utils/ExpressError.js');
-const {listingSchema} = require("./schema.js")
-const {reviewSchema} = require("./schema.js");
-const Review = require("./models/review.js");
+const Listing = require("../models/listing.js");
+const ExpressError = require('../utils/ExpressError.js');
+const {listingSchema} = require("../../schema.js")
+const {reviewSchema} = require("../../schema.js");
+const Review = require("../models/review.js");
 module.exports.isLoggedIn = (req,res,next)=>{
     if(!req.isAuthenticated()){
         //redirectURL
