@@ -1,12 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const Listing = require("../models/listing.js");
+
 const {isLoggedIn, isOwner, validateListing} = require("../middlewares/middlewares.js");
-const ListingController = require("../controllers/listings.js");
+const ListingController = require("../controllers/listing.controller.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const multer  = require('multer');
 const {storage} = require("../config/cloudConfig.js");
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+
+        if(
+            file.mimetype === "image/png" ||
+            file.mimetype === "image/jpeg" ||
+            file.mimetype === "image/jpg"
+        ){
+            cb(null,true);
+        } else{
+            cb(new Error("Only image files are allowed"));
+        }
+
+    }
+});
 
 router.route("/")
 .get(wrapAsync(ListingController.index))

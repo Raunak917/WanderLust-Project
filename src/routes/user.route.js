@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router({mergeParams: true});
-const User = require("../models/user.js");
+
 const passport = require("passport");
 const { saveRedirectUrl } = require("../middlewares/middlewares.js");
-const userController = require("../controllers/user.js");
+const userController = require("../controllers/user.controller.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 
-//GET route for signup page get
+//route for signup page get
 router.route("/signup")
 .get(userController.getUser)
 .post(wrapAsync( userController.getSaveData));

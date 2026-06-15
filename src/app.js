@@ -1,8 +1,6 @@
 if(process.env.NODE_ENV != "production"){
     require("dotenv").config();
 }
-// require("dotenv").config();
-
 
 const express = require("express");
 const app = express();
@@ -16,38 +14,35 @@ const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const User = require("./models/user.js");
-const Review = require("./models/review.js");
+const User = require("./models/user.model.js");
+
 
 
 
 const dbUrl = process.env.ATLASDB_URL;
 
-const listingRouter = require("./routes/listings.js");
-const reviewRouter = require("./routes/reviews.js");
-const userRouter = require("./routes/user.js");
+//getting all routes...
+
+const listingRouter = require("./routes/listing.route.js");
+const reviewRouter = require("./routes/review.route.js");
+const userRouter = require("./routes/user.route.js");
 
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-main()
+mongoose.connect(dbUrl)
 .then(()=>{
     console.log("connected to DB");
+    console.log(mongoose.connection.host);
 })
-.catch((err)=>{
+.catch(err=>{
     console.log(err);
- }); 
-async function main(){
-    await mongoose.connect(dbUrl);
-}
-// app.get("/", (req, res)=>{
-//     res.send("Hi I am root");
-// });
+});
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
-app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 
 const sessionOptions = {
@@ -79,7 +74,6 @@ app.use((req,res,next)=>{
 res.locals.success = req.flash("success");
 res.locals.error = req.flash("error");
 res.locals.currUser = req.user;
-console.log(res.locals.success);
 next();
 });
 
@@ -106,13 +100,16 @@ app.use((req,res,next)=>{
 });
 
 
+//custom error handler
 app.use((err, req, res, next) => {
-    console.log("FULL ERROR STACK:", err.stack);  // ← add this line
-    let { status = 500, message = "not found!!!" } = err;
-    if (!res.headersSent) {
-        res.status(status).send(message);
-    }
+  let { status = 500, message = "Something went wrong" } = err;
+
+  res.status(status).render("error.ejs", {
+    status,
+    message,
+  });
 });
+
 
 app.listen(8080, ()=>{
     console.log("server is listening to port 8080");

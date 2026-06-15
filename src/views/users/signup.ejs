@@ -9,10 +9,11 @@
       name="username"
       id="username"
       type="text"
-      
+      placeholder="Enter username"
       class="form-control"
+      autocomplete="username"
       required>
-      <div class="valid-feedback">Looks good!</div>
+      <div class="invalid-feedback">Please enter a Username.</div>
    </div>
    <div class="mb-3">
       <label for="email" class="form-label">Email</label>
@@ -21,8 +22,10 @@
       id="email"
       type="email"
       class="form-control"
+      placeholder="Enter email"
+      autocomplete="email"
       required>
-      
+      <div class="invalid-feedback">Please enter a Email.</div>
    </div>
    <div class="mb-3">
       <label for="password" class="form-label">Password</label>
@@ -31,8 +34,10 @@
       id="password"
       type="password"
       class="form-control"
+      placeholder="Create password"
+      autocomplete="new-password"
       required>
-      
+      <div class="invalid-feedback">Please enter a Password.</div>
    </div>
    <button class="btn btn-success">Sign Up</button>
    </form>

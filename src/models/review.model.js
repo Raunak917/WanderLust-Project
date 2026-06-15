@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 const reviewSchema = new Schema({
-    comment: String,
+    comment:{
+    type:String,
+    required:true
+    },
     rating:{
         type: Number,
         min:1,
@@ -10,7 +13,7 @@ const reviewSchema = new Schema({
     },
     createdAt:{
         type: Date,
-        default: Date.now()
+        default: Date.now,
     },
     author:{
         type: Schema.Types.ObjectId,

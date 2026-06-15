@@ -1,6 +1,6 @@
-const User = require("../models/user.js");
+const User = require("../models/user.model.js");
 module.exports.getUser = (req,res)=>{
-    res.render("../users/signup.ejs");
+    res.render("users/signup.ejs");
 };
 
 module.exports.getSaveData = async (req, res, next) => {
@@ -21,13 +21,14 @@ module.exports.getSaveData = async (req, res, next) => {
             return next(err);
         }
         req.flash("success", "WanderLust welcomes You!");
-        res.redirect("/listings");
+        let redirectUrl = res.locals.redirectUrl || "/listings";
+        res.redirect(redirectUrl);
     });
 };
  module.exports.getLogin = (req,res)=>{
-    res.render("../users/login.ejs");
+    res.render("users/login.ejs");
  };
- module.exports.postLogin = async(req,res)=>{
+ module.exports.postLogin =  async (req,res)=>{
         // res.send("Welcome to WanderLust! You r logged in :-)");
         req.flash("success", "Welcome to WanderLust! You r logged in");
         let redirectUrl = res.locals.redirectUrl || "/listings";

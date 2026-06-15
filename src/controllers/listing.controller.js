@@ -1,5 +1,5 @@
 
-const Listing = require("../models/listing");
+const Listing = require("../models/listing.model");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 
 const mapToken = process.env.MAP_TOKEN;
@@ -20,34 +20,35 @@ module.exports.index = async(req,res)=>{
 
 };
 
-module.exports.renderNewRoute = async(req,res)=>{
-   
-    
-    res.render("new.ejs");
-
+module.exports.renderNewRoute = (req,res)=>{
+   res.render("new.ejs");
 };
+
 //show
 module.exports.showListing = async(req, res)=>{
     let {id} = req.params;
-    const listing =  await Listing.findById(req.params.id)
+    const listing =  await Listing.findById(id)
      .populate({path:"reviews",
         populate:{
             path: "author",
         }
      })
      .populate("owner");
+    
     if(!listing){
         req.flash("error", "Listing doesNot exists");
         return res.redirect("/listings");
     }
-    res.render("show.ejs",{listing,
-        mapToken: process.env.MAP_TOKEN 
+    res.render("show.ejs",{
+        listing,
+        title: listing.title,   //fix
+        mapToken:process.env.MAP_TOKEN 
     });
 };
 
 // /posttt
 module.exports.createListing = async(req,res,next)=>{
-    try{
+    
            if(!req.file){
     req.flash("error", "Please upload an image");
     return res.redirect("/listings/new");
@@ -60,39 +61,63 @@ module.exports.createListing = async(req,res,next)=>{
         limit: 1
     })
     .send();
-    
+   
+    if(response.body.features.length === 0){
+    req.flash("error","Invalid location");
+    return res.redirect("/listings/new");
+    }
    
       
-    let url = req.file.path;
-    let filename = req.file.filename;
+    const url = req.file.path;
+    const filename = req.file.filename;
     // console.log(url, "..", filename);
 
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = {url, filename};
+    newListing.image = {url,filename};
     
     newListing.geometry = response.body.features[0].geometry;
-    let savedListings = await newListing.save();
-    console.log(savedListings);
+
+   
+    await newListing.save();
     req.flash("success", "New Listing Created");
     res.redirect("/listings");
-    }catch(err){
-        next(err);
-    }
+
 };
 //edit
-module.exports.editListing = async (req,res)=>{
-    let {id} = req.params;
-    const listing = await Listing.findById(id);
-    if(!listing){
-         req.flash("error", "Listing not Found!");
-         return res.render("edit.ejs", {listing});
-    }
+module.exports.editListing = async (req, res, next) => {
+    try {
+        console.log("Reached edit controller");
 
-    let orgImage = listing.image.url;
-orgImage = orgImage.replace("/upload", "/upload/h_300,w_250");
-res.render("edit.ejs", {listing,orgImage});
-   
+        let { id } = req.params;
+
+        const listing = await Listing.findById(id);
+
+        if (!listing) {
+            req.flash("error", "Listing not Found!");
+            return res.redirect("/listings");
+        }
+
+        let orgImage = "";
+
+        if (listing.image && listing.image.url) {
+            orgImage = listing.image.url.replace(
+                "/upload",
+                "/upload/h_300,w_250"
+            );
+        }
+
+        res.render("edit.ejs", {
+            listing,
+            orgImage,
+            title: "Edit Listing"
+        });
+
+    } catch (err) {
+        console.log("ERROR IN editListing:");
+        console.log(err);
+        next(err);
+    }
 };
 
 
@@ -121,11 +146,14 @@ module.exports.updateListing = async(req,res)=>{
     req.flash("success", "Listing Updated");
     res.redirect(`/listings/${req.params.id}`);
 };
+
 //destroy listing
 module.exports.destroyListing = async(req,res)=>{
     let {id} = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     req.flash("success", "Listing Deleted");
-    res.redirect(`/listings${id}`);
+    res.redirect(`/listings`);
 };
+
+//need improvement in geocoding, and just beside block

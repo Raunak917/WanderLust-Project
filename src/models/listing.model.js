@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Review = require('./review');
+const Review = require('./review.model');
 
 const listingSchema = new Schema({
     title: {
@@ -16,11 +16,12 @@ const listingSchema = new Schema({
        url: {
         type: String,
     //     default: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6"
+        required:true,
        }
   },
-    price: Number,
-    location: String,
-    country: String,
+    price: {type:Number, min: 0,},
+    location: {type:String, required: true,},
+    country: {type:String, required: true,},
     reviews:[
         {
             type: Schema.Types.ObjectId,
@@ -50,5 +51,8 @@ listingSchema.post("findOneAndDelete", async (listing)=>{
         await Review.deleteMany({_id : {$in : listing.reviews}});
     }
 });
+//fix of index due to map
+listingSchema.index({geometry:"2dsphere"});
+
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;
