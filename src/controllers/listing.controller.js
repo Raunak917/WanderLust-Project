@@ -14,10 +14,24 @@ const geocodingClient = mbxGeocoding({
 
 //index
 module.exports.index = async(req,res)=>{
-     const allListings = await Listing.find({});
-        // console.log(res);
-        res.render("index.ejs", {allListings});
 
+    let { q } = req.query;
+
+    let allListings;
+
+    if(q){
+        allListings = await Listing.find({
+            $or: [
+                { title: { $regex: q, $options: "i" } },
+                { location: { $regex: q, $options: "i" } },
+                { country: { $regex: q, $options: "i" } }
+            ]
+        });
+    } else {
+        allListings = await Listing.find({});
+    }
+
+    res.render("index.ejs", { allListings });
 };
 
 module.exports.renderNewRoute = (req,res)=>{
