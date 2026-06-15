@@ -10,7 +10,7 @@
 
 A full-stack property rental web app built as a personal project to go deeper into backend development, auth flows, cloud storage, and deployment. Heavily inspired by Airbnb — users can list properties, upload images, leave reviews, and find listings on an interactive map.
 
-Live demo: [wanderlust-project-1-v2n7.onrender.com](https://wanderlust-project-1-v2n7.onrender.com/listings)
+Live demo: [wanderlust-project-1-v2n7.onrender.com](https://wanderlust-property-rental-site.onrender.com)
 
 ---
 
