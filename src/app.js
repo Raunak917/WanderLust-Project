@@ -21,6 +21,10 @@ const User = require("./models/user.model.js");
 
 const dbUrl = process.env.ATLASDB_URL;
 
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
 //getting all routes...
 
 const listingRouter = require("./routes/listing.route.js");
@@ -102,12 +106,17 @@ app.use((req,res,next)=>{
 
 //custom error handler
 app.use((err, req, res, next) => {
-  let { status = 500, message = "Something went wrong" } = err;
+    if (res.headersSent) {
+        return next(err);
+    }
 
-  res.status(status).render("error.ejs", {
-    status,
-    message,
-  });
+    let { status = 500, message = "Something went wrong" } = err;
+
+    res.status(status).render("error.ejs", {
+        status,
+        message,
+        title: "Error"
+    });
 });
 
 

@@ -74,7 +74,7 @@
           WanderLust your home
         </a>
 
-        <% if(!currUser) { %>
+        <% if(typeof currUser === "undefined" || !currUser) { %>
 
           <a class="nav-link" href="/signup">
             <b>Sign Up</b>
@@ -86,7 +86,7 @@
 
         <% } %>
 
-        <% if(currUser) { %>
+        <% if(typeof currUser !== "undefined" && currUser) { %>
 
           <span class="nav-link">
             Hello, <b><%= currUser.username %></b>
